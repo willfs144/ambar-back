@@ -1,4 +1,6 @@
-import { Body, Controller, Delete, Get, NotFoundException, Param, ParseIntPipe, Post, Put, UnprocessableEntityException } from '@nestjs/common';
+import { Body, Controller, Delete, Get, NotFoundException, Param, ParseIntPipe, Post, Put,
+   UnprocessableEntityException } from '@nestjs/common';
+import { CreateUserDto } from './users.dto';
 
 interface User {
   id: number;
@@ -8,14 +10,14 @@ interface User {
 
 @Controller('users')
 export class UsersController {
-    
+
   private users: User[] = [
     { id: 1, name: 'John Doe', email: 'john.doe@example.com' },
-    { id: 2, name: 'Jane Smith', email: 'jane.smith@example.com'},
-    { id: 3, name: 'Juana de arco', email: 'juana.de.arco@example.com'}
+    { id: 2, name: 'Jane Smith', email: 'jane.smith@example.com' },
+    { id: 3, name: 'Juana de arco', email: 'juana.de.arco@example.com' }
   ];
 
-  
+
   @Get()
   getUsers(): User[] {
     return this.users;
@@ -27,13 +29,13 @@ export class UsersController {
 
     const user = this.users.find(user => user.id === id);
     if (!user) {
-     throw new NotFoundException(`User with id ${id} not found`);
+      throw new NotFoundException(`User with id ${id} not found`);
     }
     return user;
   }
 
   @Post()
-  createUser(@Body() createUserDto: { name: string; email: string }): User {
+  createUser(@Body() createUserDto: CreateUserDto) {
     const { name, email } = createUserDto;
     const newUser: User = {
       id: this.users.length + 1,
@@ -59,7 +61,7 @@ export class UsersController {
     @Param('id', ParseIntPipe) id: number,
     @Body() updateUserDto: { name?: string; email?: string }
   ): User {
-    if(updateUserDto.email && !updateUserDto.email.includes('@')) {
+    if (updateUserDto.email && !updateUserDto.email.includes('@')) {
       throw new UnprocessableEntityException('Invalid email format');
     }
     const user = this.users.find(user => user.id === id);
@@ -70,6 +72,6 @@ export class UsersController {
       Object.assign(user, updateUserDto);
     }
     return user;
-  }  
+  }
 
 }
